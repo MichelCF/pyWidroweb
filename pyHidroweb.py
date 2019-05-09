@@ -9,36 +9,36 @@ home = os.path.expanduser('~')
 
 def wait_load_items(driver, xpath):
 
-	n = 1
-	p = 1
-	while p: 
+	waiting_time = 0
+	find_element = 0 
+	while not(find_element): 
 		try:
 			driver.find_element_by_xpath(xpath)
-			p = 0
+			find_element = 1 
 		except:
-			print(n, xpath)
+			print(waiting_time, xpath)
 			time.sleep(1)
-			n += 1
-		if n == 300:
+			waiting_time += 1
+		if waiting_time == 300:
 			print('Tempo de espera excedito. Processo encerrado.')
 			exit()
 
 def click_css_selector(driver, css_selector):
-	n = 0
-	p = 1
-	while p:
+	waiting_time = 0
+	find_element_css = 0
+	while not(find_element_css):
 		try:
 			driver.find_element_by_css_selector(css_selector).click()
-			p = 0
+			find_element_css = 1
 		except:
 			time.sleep(1)
-			n += 1
+			waiting_time += 1
 
-		if n == 300:
+		if waiting_time == 300:
 			print('Tempo de espera excedido.')
 			break
 
-def download_hidroweb(id_station, dir_out = 'Downloads'):
+def download_hidroweb(id_station, dir_out = 'Downloads', time_close_browser = 5):
 
 
     # display = Display(visible=0, size=(800,600))
@@ -65,23 +65,21 @@ def download_hidroweb(id_station, dir_out = 'Downloads'):
     driver.get(url)
     time.sleep(1)
     driver.get(url)
-    n = 0
-    p = 1
-    while  p:
+    waiting_time = 0
+    find_element = 0
+    while  not(find_element):
         try:
             driver.find_element_by_link_text('Séries Históricas').click()
-            p = 0
+            find_element = 1
         except:
             time.sleep(1)
-            n += 1
-        if n == 300:
+            waiting_time += 1
+        if waiting_time == 300:
             print('Tempo de espera excedido. Processo encerrado.')
             exit()
 	
     wait_load_items(driver, '//*[@id="form:fsListaEstacoes:codigoEstacao"]')
     driver.find_element_by_xpath('//*[@id="form:fsListaEstacoes:codigoEstacao"]').send_keys([id_station, Keys.ENTER])
-    #wait_load_items(driver, '//*[@id="form:fsListaEstacoes:nomeEstacao"]')
-    #driver.find_element_by_xpath('//*[@id="form:fsListaEstacoes:nomeEstacao"]').send_keys([name_estation, Keys.ENTER])
     click_css_selector(driver, '#form\\:fsListaEstacoes\\:bt')
     wait_load_items(driver, '//div[contains(@class, "checkbox i-checks")]')
     time.sleep(2)
@@ -92,7 +90,7 @@ def download_hidroweb(id_station, dir_out = 'Downloads'):
     except Exception as e:
         print(e)
 		
-    time.sleep(5) #espera 5 segundos para termina o download
+    time.sleep(time_close_browser) #espera 5 segundos para termina o download
     driver.quit()
 
 
